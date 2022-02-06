@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Environment.Data;
-using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using Utilities;
@@ -15,20 +13,13 @@ namespace Environment
         [SerializeField] private int2 chunkSpawnSize = 8;
         [SerializeField] private Material[] chunkMaterial;
         [SerializeField] private int maxGenerateChunksInFrame = 1;
-
-        public SkyboxPrefab skybox;
-        public TimePrefab time;
-
+        
         private class ChunkNode : PriorityQueueNode { public int3 chunkPosition; }
         
         private Dictionary<int3, Chunk> chunks = new();
         private int3 m_LastTargetChunkPosition = int.MinValue;
         private PriorityQueue<ChunkNode> generateChunkQueue = new(100000);
         private SharedData sharedData;
-        
-        private static readonly int AtlasX = Shader.PropertyToID("_AtlasX");
-        private static readonly int AtlasY = Shader.PropertyToID("_AtlasY");
-        private static readonly int AtlasRec = Shader.PropertyToID("_AtlasRec");
         
         public int UpdatingChunks { get; set; }
 
@@ -38,9 +29,9 @@ namespace Environment
         {
             sharedData = new SharedData();
             sharedData.Generate();
-            Shader.SetGlobalInt(AtlasX, Shared.AtlasSize.x);
-            Shader.SetGlobalInt(AtlasY, Shared.AtlasSize.y);
-            Shader.SetGlobalVector(AtlasRec, new Vector4(1.0f / Shared.AtlasSize.x, 1.0f / Shared.AtlasSize.y));
+            Shader.SetGlobalInt(ShaderIDs.AtlasX, Shared.AtlasSize.x);
+            Shader.SetGlobalInt(ShaderIDs.AtlasY, Shared.AtlasSize.y);
+            Shader.SetGlobalVector(ShaderIDs.AtlasRec, new Vector4(1.0f / Shared.AtlasSize.x, 1.0f / Shared.AtlasSize.y));
         }
         
         private void Update()

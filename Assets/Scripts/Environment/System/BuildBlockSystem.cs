@@ -9,14 +9,17 @@ namespace Environment.System
 {
     public class BuildBlockSystem : ISharedSystem
     {
-        private string m_BlockPath;
+        private BlockPrefab[] m_BlockPath;
         
-        public BuildBlockSystem(string path) => m_BlockPath = path;
+        public BuildBlockSystem()
+        { 
+            m_BlockPath = Resources.LoadAll<BlockPrefab>("Blocks");
+        }
 
         public void Init()
         {
             SharedData.BlockData.Data = new FixedArray<long>(Enum.GetValues(typeof(BlockType)).Length);
-            Array.ForEach(Resources.LoadAll<BlockPrefab>(m_BlockPath), prefab =>
+            Array.ForEach(m_BlockPath, prefab =>
             {
                 var data = 0L;
                 data |= (UnsafeUtility.EnumToInt(prefab.shape) & 0xFFL) << 56; // blockTypeBuffer
@@ -28,6 +31,6 @@ namespace Environment.System
             });
         }
 
-        public void Refresh() { return; }
+        public void Refresh() { }
     }
 }

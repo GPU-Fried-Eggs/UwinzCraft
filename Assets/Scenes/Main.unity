@@ -192,8 +192,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.8
+  m_Radius: 0.39
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -742,8 +742,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 810ffeed0b008ce4690300c99508da0d, type: 2}
   - {fileID: 2100000, guid: e8ca50dc10b15e34eb1ef01523e3894c, type: 2}
   maxGenerateChunksInFrame: 1
-  skybox: {fileID: 11400000, guid: 0451986f5d86e4d44aca7b069ddb5169, type: 2}
-  time: {fileID: 11400000, guid: 16a6c77acc544974fafeca67b92a1f48, type: 2}
 --- !u!4 &2139749289
 Transform:
   m_ObjectHideFlags: 0

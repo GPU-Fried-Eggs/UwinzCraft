@@ -4,6 +4,10 @@ namespace Environment.Data
 {
     public class ShaderIDs
     {
+        internal static readonly int AtlasX = Shader.PropertyToID("_AtlasX");
+        internal static readonly int AtlasY = Shader.PropertyToID("_AtlasY");
+        internal static readonly int AtlasRec = Shader.PropertyToID("_AtlasRec");
+
         // Textures
         internal static readonly int SunTexture = Shader.PropertyToID("_SunTexture");
         internal static readonly int MoonTexture = Shader.PropertyToID("_MoonTexture");
@@ -57,6 +61,5 @@ namespace Environment.Data
         internal static readonly int SunMatrix = Shader.PropertyToID("_SunMatrix");
         internal static readonly int MoonMatrix = Shader.PropertyToID("_MoonMatrix");
         internal static readonly int StarfieldMatrix = Shader.PropertyToID("_StarfieldMatrix");
-        
     }
 }

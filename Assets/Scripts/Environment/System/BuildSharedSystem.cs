@@ -43,14 +43,14 @@ namespace Environment.System
 
             SharedData.CubeCrossIndices.Data = new FixedArray<int>(12);
             SharedData.CubeCrossIndices.Data.CopyFrom(4, 3, 1, 4, 6, 3, 0, 7, 5, 0, 2, 7);
-            
+
         }
 
         private readonly ISharedSystem[] m_Systems = 
         {
-            new BuildBlockSystem("Blocks"),
-            new BuildTimeSystem(World.Instance.time),
-            new BuildSkyboxSystem(World.Instance.skybox, World.Instance.time)
+            new BuildBlockSystem(),
+            new BuildTimeSystem(),
+            new BuildSkyboxSystem()
         };
 
         public void Init() => Array.ForEach(m_Systems, system => system.Init());

@@ -9,7 +9,10 @@ namespace Environment.System
         private TimePrefab m_Data;
         private float m_TimeProgression = 0f;
         
-        public BuildTimeSystem(TimePrefab data) => this.m_Data = data;
+        public BuildTimeSystem()
+        { 
+            m_Data = Resources.Load<TimePrefab>("Time");
+        }
 
         public void Init()
         {

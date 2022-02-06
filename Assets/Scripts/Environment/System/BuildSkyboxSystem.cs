@@ -9,8 +9,12 @@ namespace Environment.System
     {
         private SkyboxPrefab m_Data;
         private TimePrefab m_Time;
-        
-        public BuildSkyboxSystem(SkyboxPrefab data, TimePrefab time) { m_Data = data; m_Time = time; }
+
+        public BuildSkyboxSystem()
+        {
+            m_Data = Resources.Load<SkyboxPrefab>("Skybox");
+            m_Time = Resources.Load<TimePrefab>("Time");
+        }
 
         private readonly Vector3 m_Br = new Vector3(0.00519673f, 0.0121427f, 0.0296453f);
         private readonly Vector3 m_Bm = new Vector3(0.005721017f, 0.004451339f, 0.003146905f);

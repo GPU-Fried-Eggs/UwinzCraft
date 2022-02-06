@@ -1,7 +1,6 @@
-using System;
 using Unity.Mathematics;
+using Unity.Profiling;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace Utilities
@@ -12,12 +11,50 @@ namespace Utilities
         private Canvas m_Canvas;
         private Text m_Text;
 
+        private ProfilerRecorder m_MainThreadTimeRecorder;
+        private ProfilerRecorder m_SystemMemoryRecorder, m_GCMemoryRecorder;
+        private ProfilerRecorder m_DrawCallsRecorder, m_VerticesRecorder, m_TrianglesRecorder;
+        
         private static float Fps => 1 / Time.unscaledDeltaTime;
-        private static float Cpu => 1000 * Time.deltaTime;
+        private static double GetRecorderFrameAverage(ProfilerRecorder recorder)
+        {
+            var samplesCount = recorder.Capacity;
+            if (samplesCount == 0)
+                return 0;
 
-        private static float MonoMemory => GC.GetTotalMemory(false) / MemoryDivider;
-        private static float AllocMemory => Profiler.GetTotalAllocatedMemoryLong() / MemoryDivider;
+            double r = 0;
+            unsafe
+            {
+                var samples = stackalloc ProfilerRecorderSample[samplesCount];
+                recorder.CopyTo(samples, samplesCount);
+                for (var i = 0; i < samplesCount; ++i)
+                    r += samples[i].Value;
+                r /= samplesCount;
+            }
 
+            return r;
+        }
+        
+        private void OnEnable()
+        {
+            m_MainThreadTimeRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", 15);
+            m_SystemMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "System Used Memory");
+            m_GCMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
+            m_DrawCallsRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count");
+            m_VerticesRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Vertices Count");
+            m_TrianglesRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Triangles Count");
+        }
+
+        private void OnDisable()
+        {
+            m_MainThreadTimeRecorder.Dispose();
+            m_SystemMemoryRecorder.Dispose();
+            m_GCMemoryRecorder.Dispose();
+            m_DrawCallsRecorder.Dispose();
+            m_VerticesRecorder.Dispose();
+            m_TrianglesRecorder.Dispose();
+        }
+        
         private void Awake()
         {
             #region GUIBuilder
@@ -37,14 +74,16 @@ namespace Utilities
 
             #endregion
             
-            InvokeRepeating(nameof(SysInfoUpdater), 0, 0.5f);
+            InvokeRepeating(nameof(SysInfoUpdater), 0, 0.6f);
         }
 
         private void SysInfoUpdater()
         {
-            m_Text.text = $"FPS: {Fps:f1}  [{Cpu:f} MS]\n" +
-                          $"MEM TOTAL: {MonoMemory:f}MB\n" +
-                          $"MEM ALLOC: {AllocMemory:f}MB";
+            m_Text.text = $"Fps: {Fps:F1}  [{GetRecorderFrameAverage(m_MainThreadTimeRecorder) * (1e-6f):F1} ms]\n" +
+                          $"Sys Memory: {m_SystemMemoryRecorder.LastValue / MemoryDivider:F0}MB\n" +
+                          $"GC Memory: {m_GCMemoryRecorder.LastValue / MemoryDivider:F0}MB\n" +
+                          $"Draw Calls: {m_DrawCallsRecorder.LastValue}\n" +
+                          $"Verts: {m_VerticesRecorder.LastValue * (1e-3f):F1}k  Tris: {m_TrianglesRecorder.LastValue * (1e-3f):F1}k";
         }
     }
 }
