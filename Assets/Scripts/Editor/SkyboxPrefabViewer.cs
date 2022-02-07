@@ -148,7 +148,6 @@ namespace Environment
                 serializedObject.ApplyModifiedProperties();
                 m_Prefab.starfieldColorBalance = m_starFieldColor;
                 m_Prefab.starfieldPosition = m_starFieldPosition;
-                m_Prefab.UpdateSkySettings();
             }
             
         }

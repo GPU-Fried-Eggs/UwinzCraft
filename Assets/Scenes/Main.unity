@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 410087040}
-  m_IndirectSpecularColor: {r: 0.59665954, g: 0.7443875, b: 0.9037043, a: 1}
+  m_IndirectSpecularColor: {r: 0.54087687, g: 0.6821602, b: 0.8399308, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -581,7 +581,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690527411}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -21.974466, y: 48.568222, z: 54.075928}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -738,7 +738,7 @@ MonoBehaviour:
     y: 8
   chunkMaterial:
   - {fileID: 2100000, guid: e8ca50dc10b15e34eb1ef01523e3894c, type: 2}
-  - {fileID: 2100000, guid: 8ab717f5f4660b047a05276dca45fe02, type: 2}
+  - {fileID: 2100000, guid: cdb5a16f31ee9ca43b20ee76fcbdffbf, type: 2}
   - {fileID: 2100000, guid: 810ffeed0b008ce4690300c99508da0d, type: 2}
   - {fileID: 2100000, guid: e8ca50dc10b15e34eb1ef01523e3894c, type: 2}
   maxGenerateChunksInFrame: 1

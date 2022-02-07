@@ -97,7 +97,7 @@
             {
                 Varyings Output = (Varyings)0;
 
-                Output.Position = TransformObjectToHClip(Input.vertex);
+                Output.Position = TransformObjectToHClip(Input.vertex.xyz);
                 Output.LocalPos = normalize(mul((float3x3)unity_WorldToObject, Input.vertex.xyz));
                 Output.LocalPos = normalize(mul((float3x3)_SkyUpDirectionMatrix, Output.LocalPos));
 
@@ -134,7 +134,7 @@
 
                 // Scattering.
                 float rayPhase = 2.0 + 0.5 * pow(sunCosTheta, 2.0); // Rayleigh phase function based on the Nielsen's paper.
-                float miePhase = _MieG.x / pow(_MieG.y - _MieG.z * sunCosTheta, 1.5); // The Henyey-Greenstein phase function.
+                float miePhase = _MieG.x / pow(abs(_MieG.y - _MieG.z * sunCosTheta), 1.5); // The Henyey-Greenstein phase function.
 
                 float3 BrTheta = 0.0596831f * _Br * rayPhase * _RayleighColor.rgb * extinction;
                 float3 BmTheta = 0.07957747f * _Bm * miePhase * _MieColor.rgb * extinction * sunRise;
@@ -151,7 +151,7 @@
                 float horizonExtinction = saturate((viewDir.y) * 1000.0) * fex.b;
 
                 // Sun Disk.
-                float3 sunTex = SAMPLE_TEXTURE2D(_SunTexture, sampler_SunTexture, Input.SunPos + 0.5).rgb * _SunIntensity;
+                float3 sunTex = SAMPLE_TEXTURE2D(_SunTexture, sampler_SunTexture, Input.SunPos.xy + 0.5).rgb * _SunIntensity;
                 sunTex = pow(sunTex, 2.0);
                 sunTex *= fex.b * saturate(sunCosTheta);
 
@@ -159,7 +159,7 @@
                 float moonFix = saturate(dot(Input.LocalPos, _MoonDirection)); // Delete other side moon.
                 float4 moonTex = SAMPLE_TEXTURE2D(_MoonTexture, sampler_MoonTexture, Input.MoonPos.xy + 0.5) * moonFix;
                 float moonMask = 1.0 - moonTex.a;
-                float3 moonColor = (moonTex.rgb * _MoonDiskColor * moonTex.a) * horizonExtinction;
+                float3 moonColor = (moonTex.rgb * _MoonDiskColor.rgb * moonTex.a) * horizonExtinction;
 
                 // Moon Bright.
                 float3 moonBright = 1.0 + dot(viewDir, -_MoonDirection);
@@ -169,7 +169,7 @@
                 // Starfield.
                 float4 starTex = SAMPLE_TEXTURECUBE(_StarfieldTexture, sampler_StarfieldTexture, Input.StarfieldPos);
                 float3 stars = starTex.rgb * starTex.a;
-                float3 milkyWay = pow(starTex.rgb, 1.5) * _MilkyWayIntensity;
+                float3 milkyWay = pow(abs(starTex.rgb), 1.5) * _MilkyWayIntensity;
                 float3 starfield = (stars + milkyWay) * _StarfieldColorBalance * moonMask * horizonExtinction * _StarfieldIntensity;
 
                 // Clouds.
@@ -179,8 +179,8 @@
                 float4 cloudTex = SAMPLE_TEXTURE2D(_CloudTexture, sampler_CloudTexture, cloud_uv);
                 float cloudAlpha = 1.0 - cloudTex.b;
                 inScatter = inScatter + nightSky + moonBright;
-                float3 cloud = lerp(inScatter * _CloudScattering, _CloudColor, cloudTex.r * pow(fex.r, _CloudExtinction)) * _CloudIntensity;
-                cloud = pow(cloud, _CloudPower);
+                float3 cloud = lerp(inScatter * _CloudScattering, _CloudColor.rgb, cloudTex.r * pow(fex.r, _CloudExtinction)) * _CloudIntensity;
+                cloud = pow(abs(cloud), _CloudPower);
                 
                 // Output.
                 float3 OutputColor = inScatter + cloud + (sunTex + starfield + moonColor) * lerp(1.0, cloudAlpha, saturate(_CloudIntensity));
@@ -204,7 +204,7 @@
                 #endif
                 
                 // Color Correction.
-                OutputColor = pow(OutputColor, 2.2);
+                OutputColor = pow(abs(OutputColor), 2.2);
 
                 #ifdef UNITY_COLORSPACE_GAMMA
 					OutputColor = pow(OutputColor, 0.4545);

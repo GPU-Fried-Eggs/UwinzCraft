@@ -12,7 +12,7 @@ Material:
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 1
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -35,21 +35,21 @@ Material:
     m_Ints: []
     m_Floats:
     - _DistortionScale: 1.2
-    - _NormalStrength: 0.27
-    - _Opacity: 0.55
+    - _NormalStrength: 1.3
+    - _Opacity: 0.682
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ShoreDepth: 0.15
+    - _ShoreDepth: 0.06
     - _ShoreSlope: 0.22
-    - _Smoothness: 0.662
+    - _Smoothness: 0.5
     - _WaterClarity: 0.55
-    - _WaveAmplitude: 0.2
+    - _WaveAmplitude: 0.1
     m_Colors:
-    - _DeepColor: {r: 0.10196074, g: 0.31764704, b: 0.5960785, a: 1}
-    - _ShallowColor: {r: 0.31764704, g: 0.32156852, b: 0.29019603, a: 1}
-    - _Speeds: {r: 0.6, g: 0.4, b: 0.5, a: 0.6}
+    - _DeepColor: {r: 0.10196077, g: 0.31764707, b: 0.5960785, a: 0}
+    - _ShallowColor: {r: 0.31764707, g: 0.32156855, b: 0.29019606, a: 0}
+    - _Speeds: {r: 0.5, g: 0.5, b: 0.5, a: 0.6}
   m_BuildTextureStacks: []
---- !u!114 &2171772944437664180
+--- !u!114 &6498140463000427223
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

@@ -40,12 +40,7 @@ namespace Environment.System
             m_SunFlareComponent = m_LightTransform.GetComponent<LensFlareComponentSRP>();
             
             m_Data.UpdateSkySettings();
-            
-            m_Data.skyMaterial.SetTexture(ShaderIDs.SunTexture, m_Data.sunTexture);
-            m_Data.skyMaterial.SetTexture(ShaderIDs.MoonTexture, m_Data.moonTexture);
-            m_Data.skyMaterial.SetTexture(ShaderIDs.CloudTexture, m_Data.cloudTexture);
-            m_Data.skyMaterial.SetTexture(ShaderIDs.StarfieldTexture, m_Data.starfieldTexture);
-            
+
             Refresh();
         }
 

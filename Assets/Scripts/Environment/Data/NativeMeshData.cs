@@ -77,7 +77,7 @@ namespace Environment.Data
                 counter = counter
             }.Schedule();
 
-            int frameCount = 0;
+            int frameCount = 1;
             yield return new WaitUntil(() =>
             {
                 frameCount++;

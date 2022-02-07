@@ -26,25 +26,24 @@ namespace Environment.System
 
             var waterLevel = 55;
 
-            var simplexHeight = CalcPixel2DFractal(worldPosition.x, worldPosition.z, 0.008f, 2) * 5f +
-                                    CalcPixel2DFractal(worldPosition.x, worldPosition.z, 0.02f, 3) * 4.5f; // Base height
-
-            simplexHeight += CalcPixel2D(worldPosition.x, worldPosition.z, 0.001f) * 25f + +35f;//43f;
+            var simplexHeight = CalcPixel2D(worldPosition.xz, 0.008f) * 5f +
+                                    CalcPixel2D(worldPosition.xz, 0.02f) * 4.5f +
+                                    CalcPixel2D(worldPosition.xz, 0.001f) * 25f;//43f;
 
             // Logic
-            int heightMap = (int)math.floor(simplexHeight);
+            int heightMap = (int)math.floor(simplexHeight) + 35;
 
             bool isLake = heightMap <= waterLevel;
 
-            bool isCaves = noise.cnoise(new float3(worldPosition.x * 0.035f, worldPosition.y * 0.035f, worldPosition.z * 0.035f)) > 0.75f;
+            bool isCaves = noise.cnoise(worldPosition * new float3(0.035f)) > 0.75f;
 
-            if (worldPosition.y == 0 || (worldPosition.y <= 3 && rand.NextBool()))
+            if (worldPosition.y == 0 ||  worldPosition.y < noise.cnoise(worldPosition.xz * new float2(0.3f)) * 2f + 1f)
             {
                 block.type = BlockType.Bedrock;
             }
             else if (worldPosition.y >= heightMap - 5 && worldPosition.y <= heightMap && isLake)
             {
-                if (CalcPixel2DFractal(worldPosition.x, worldPosition.z, 0.02f, 3) > 0.5f)
+                if (CalcPixel2D(worldPosition.xz, 0.02f) > 0.5f)
                 {
                     block.type = worldPosition.y >= heightMap - 2 ? BlockType.Sand : // make to layer sand
                                  worldPosition.y >= heightMap - 3 ? BlockType.SandStone : BlockType.Stone; //make a sand base, then stone
@@ -109,7 +108,7 @@ namespace Environment.System
                 {
                     if (gridPosition.x < chunkSize.x - 3 && gridPosition.x > 3 &&
                         gridPosition.z < chunkSize.z - 3 && gridPosition.z > 3 &&
-                        CalcPixel2D(worldPosition.x, worldPosition.z, 0.45f) > 0.9f)
+                        CalcPixel2D(worldPosition.xz, 0.45f) > 0.9f)
                     {
                         int treeHeight = rand.NextBool() ? 5 : 6;
                         block.type = BlockType.OakLeaves;
@@ -139,7 +138,7 @@ namespace Environment.System
                     }
                     else if (gridPosition.x < chunkSize.x - 1 && gridPosition.x > 1 &&
                              gridPosition.z < chunkSize.z - 1 && gridPosition.z > 1 &&
-                             CalcPixel2D(worldPosition.x + 10, worldPosition.z + 2, 0.45f) > 0.5f)
+                             CalcPixel2D(new float2(worldPosition.x + 10, worldPosition.z + 2), 0.45f) > 0.5f)
                     {
                         block.type = rand.NextBool() ? BlockType.Grass : BlockType.Air;
                     }
@@ -147,24 +146,8 @@ namespace Environment.System
             }
             blocks[index] = block;
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CalcPixel2DFractal(float x, float y, float frequency, int octaves, float amplitude = 1.0f, float lacunarity = 2.0f, float persistence = 0.5f)
-        {
-            float output = 0.0f, denom = 0.0f;
-
-            for (int i = 0; i < octaves; i++)
-            {
-                output += amplitude * CalcPixel2D(x, y, frequency);
-                denom += amplitude;
-                frequency *= lacunarity;
-                amplitude *= persistence;
-            }
-
-            return output / denom;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CalcPixel2D(float x, float y, float scale) => (noise.snoise(new float2(x * scale, y * scale)) + 1) * 0.5f;
+        public static float CalcPixel2D(float2 pos, float scale) => (noise.snoise(pos * new float2(scale)) + 1) * 0.5f;
     }
 }

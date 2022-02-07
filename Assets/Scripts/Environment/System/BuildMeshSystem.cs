@@ -91,7 +91,7 @@ namespace Environment.System
                             #region Step3: Mesh combine in xy direction
     
                             int height = 1, width = 1;
-                            if (shape != (long) BlockShape.Transparent && shape != (long) BlockShape.Foliage)
+                            if (shape != (long) BlockShape.Transparent && shape != (long) BlockShape.Liquid && shape != (long) BlockShape.Foliage)
                             {
                                 for (height = 1; height + y < chunkSize[SharedData.DirectionAlignedY.Data[direction]]; height++)
                                 {
@@ -99,10 +99,8 @@ namespace Environment.System
                                     nextPosition[SharedData.DirectionAlignedY.Data[direction]] += height;
 
                                     var nextBlock = blocks[nextPosition.To1DIndex(chunkSize)];
-                                    //var nextLight = lightData[nextPosition.To1DIndex(chunkSize)];
-  
+                                    
                                     if (nextBlock.type != block.type) break;
-                                    //if (!nextLight.CompareFace(light, direction)) break;
                                     if (hashMap.ContainsKey(nextPosition)) break;
 
                                     hashMap.TryAdd(nextPosition, default);
@@ -152,9 +150,6 @@ namespace Environment.System
                                         //    |             |
                                         // 4(0,1,0) --> 5(1,1,0)
                                         float3 vertex = SharedData.CubeVertices.Data[SharedData.CubeFaces.Data[i + 2 * 4]];
-
-                                        vertex[0] *= width;
-                                        vertex[2] *= height;
 
                                         colors[numVertices + i] = new Color(0, 0, 0, 1);
                                         vertices[numVertices + i] = vertex + gridPosition + new float3(0, -0.13f, 0);

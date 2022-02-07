@@ -81,6 +81,10 @@ namespace Environment.Data
                     skyMaterial.DisableKeyword("_ENABLE_CLOUD");
                     break;
             }
+            skyMaterial.SetTexture(ShaderIDs.SunTexture, sunTexture);
+            skyMaterial.SetTexture(ShaderIDs.MoonTexture, moonTexture);
+            skyMaterial.SetTexture(ShaderIDs.CloudTexture, cloudTexture);
+            skyMaterial.SetTexture(ShaderIDs.StarfieldTexture, starfieldTexture);
         }
     }
 }
