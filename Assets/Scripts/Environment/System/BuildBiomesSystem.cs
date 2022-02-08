@@ -12,7 +12,7 @@ namespace Environment.System
         [ReadOnly] public int3 chunkSize;
 
         [NativeDisableParallelForRestriction] public NativeArray<Block> blocks;
-        
+
         public void Execute(int index)
         {
             

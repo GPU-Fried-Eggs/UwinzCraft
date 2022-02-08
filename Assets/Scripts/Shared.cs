@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Unity.Burst.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -82,7 +83,7 @@ public static class Shared
 
         return invDirection;
     }
-        
+    
     private static int3 Mod(int3 v, int3 m)
     {
         var r = (int3) math.fmod(v, m);

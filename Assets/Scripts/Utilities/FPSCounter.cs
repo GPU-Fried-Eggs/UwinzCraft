@@ -1,12 +1,15 @@
+using UnityEngine;
+#if !UNITY_EDITOR
 using Unity.Mathematics;
 using Unity.Profiling;
-using UnityEngine;
 using UnityEngine.UI;
+#endif
 
 namespace Utilities
 {
     public class FPSCounter : MonoBehaviour
     {
+#if !UNITY_EDITOR
         private const float MemoryDivider = 1048576;
         private Canvas m_Canvas;
         private Text m_Text;
@@ -85,5 +88,6 @@ namespace Utilities
                           $"Draw Calls: {m_DrawCallsRecorder.LastValue}\n" +
                           $"Verts: {m_VerticesRecorder.LastValue * (1e-3f):F1}k  Tris: {m_TrianglesRecorder.LastValue * (1e-3f):F1}k";
         }
+#endif
     }
 }

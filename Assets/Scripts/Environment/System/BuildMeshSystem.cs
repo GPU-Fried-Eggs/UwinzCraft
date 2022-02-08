@@ -40,7 +40,7 @@ namespace Environment.System
          * 4/5. daX = 0        , daY = 1        , daZ = 2                                           *
          *   => x = chunkSize.x, y = chunkSize.y, d = chunkSize.z => gridPosition = (x, y, depth)   *
          * ---------------------------------------------------------------------------------------- */
-        public unsafe void Execute()
+        public void Execute()
         {
             for (int direction = 0; direction < 6; direction++)
             {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.burst": "1.6.4",
     "com.unity.collections": "1.1.0",
     "com.unity.feature.development": "1.0.1",
     "com.unity.render-pipelines.universal": "12.1.4",

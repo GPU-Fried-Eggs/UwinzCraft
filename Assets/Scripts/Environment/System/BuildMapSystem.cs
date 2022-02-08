@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Utilities;
 
 namespace Environment.System
 {
@@ -26,24 +27,24 @@ namespace Environment.System
 
             var waterLevel = 55;
 
-            var simplexHeight = CalcPixel2D(worldPosition.xz, 0.008f) * 5f +
-                                    CalcPixel2D(worldPosition.xz, 0.02f) * 4.5f +
-                                    CalcPixel2D(worldPosition.xz, 0.001f) * 25f;//43f;
+            var simplexHeight = Noise.FractalSimplex(worldPosition.xz + new float2(9.0f, 0.5f), 0.008f, 2) * 5f +
+                                    Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.02f, 3) * 4.5f +
+                                    Noise.FractalSimplex(worldPosition.xz + new float2(5.3f, 0.2f), 0.001f, 4) * 35f;//43f;
 
             // Logic
-            int heightMap = (int)math.floor(simplexHeight) + 35;
+            int heightMap = (int)math.floor(simplexHeight) + waterLevel;
 
             bool isLake = heightMap <= waterLevel;
 
             bool isCaves = noise.cnoise(worldPosition * new float3(0.035f)) > 0.75f;
 
-            if (worldPosition.y == 0 ||  worldPosition.y < noise.cnoise(worldPosition.xz * new float2(0.3f)) * 2f + 1f)
+            if (worldPosition.y == 0 || worldPosition.y < rand.NextInt(5))
             {
                 block.type = BlockType.Bedrock;
             }
             else if (worldPosition.y >= heightMap - 5 && worldPosition.y <= heightMap && isLake)
             {
-                if (CalcPixel2D(worldPosition.xz, 0.02f) > 0.5f)
+                if (Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.02f, 3) > 0.2f)
                 {
                     block.type = worldPosition.y >= heightMap - 2 ? BlockType.Sand : // make to layer sand
                                  worldPosition.y >= heightMap - 3 ? BlockType.SandStone : BlockType.Stone; //make a sand base, then stone
