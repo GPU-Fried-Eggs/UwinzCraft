@@ -28,8 +28,8 @@ namespace Environment.System
             var waterLevel = 55;
 
             var simplexHeight = Noise.FractalSimplex(worldPosition.xz + new float2(9.0f, 0.5f), 0.008f, 2) * 5f +
-                                    Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.02f, 3) * 4.5f +
-                                    Noise.FractalSimplex(worldPosition.xz + new float2(5.3f, 0.2f), 0.001f, 4) * 35f;//43f;
+                                    Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.022f, 3) * 4.5f +
+                                    Noise.FractalSimplex(worldPosition.xz + new float2(5.3f, 0.2f), 0.001f, 4) * 30f;//43f;
 
             // Logic
             int heightMap = (int)math.floor(simplexHeight) + waterLevel;

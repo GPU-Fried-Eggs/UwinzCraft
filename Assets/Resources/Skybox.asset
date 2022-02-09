@@ -1148,6 +1148,9 @@ MonoBehaviour:
   sunDiskSize: 0.4
   moonDiskSize: 0.5
   cloudMode: 1
+  enableReflection: 1
+  environmentReflectionResolution: 16
+  environmentReflectionTimeSlicingMode: 0
   onSunRise:
     m_PersistentCalls:
       m_Calls: []

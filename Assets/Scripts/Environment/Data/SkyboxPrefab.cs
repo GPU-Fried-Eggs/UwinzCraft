@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 
 namespace Environment.Data
 {
     public enum CloudMode { Off, Static };
-    
+
     [CreateAssetMenu(fileName = "New Skybox", menuName = "Skybox Prefab")]
     public class SkyboxPrefab : ScriptableObject
     {
@@ -63,6 +64,11 @@ namespace Environment.Data
         public float moonDiskSize = 0.5f;
         
         public CloudMode cloudMode = CloudMode.Static;
+        
+        // Environment Reflection
+        public bool enableReflection = false;
+        public int environmentReflectionResolution;
+        public ReflectionProbeTimeSlicingMode environmentReflectionTimeSlicingMode;
         
         // Event
         public UnityEvent onSunRise;

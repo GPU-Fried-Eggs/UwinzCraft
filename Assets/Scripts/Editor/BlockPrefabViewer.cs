@@ -3,6 +3,7 @@ using Environment.Data;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+// ReSharper disable InconsistentNaming
 
 namespace Environment
 {

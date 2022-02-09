@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Environment.Data;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,12 +15,12 @@ namespace Environment
         [SerializeField] private Material[] chunkMaterial;
         [SerializeField] private int maxGenerateChunksInFrame = 1;
         
-        private class ChunkNode : PriorityQueueNode { public int3 chunkPosition; }
+        private class ChunkNode : PriorityQueueNode, IEquatable<ChunkNode> { public int3 chunkPosition; public bool Equals(ChunkNode other) => chunkPosition.Equals(other!.chunkPosition); }
         
-        private Dictionary<int3, Chunk> chunks = new();
+        private Dictionary<int3, Chunk> m_Chunks = new();
         private int3 m_LastTargetChunkPosition = int.MinValue;
-        private PriorityQueue<ChunkNode> generateChunkQueue = new(100000);
-        private SharedData sharedData;
+        private PriorityQueue<ChunkNode> m_GenerateChunksQueue = new(100000);
+        private SharedData m_SharedData;
         
         public int UpdatingChunks { get; set; }
 
@@ -27,8 +28,8 @@ namespace Environment
 
         private void Awake()
         {
-            sharedData = new SharedData();
-            sharedData.Generate();
+            m_SharedData = new SharedData();
+            m_SharedData.Generate();
             Shader.SetGlobalInt(ShaderIDs.AtlasX, Shared.AtlasSize.x);
             Shader.SetGlobalInt(ShaderIDs.AtlasY, Shared.AtlasSize.y);
             Shader.SetGlobalVector(ShaderIDs.AtlasRec, new Vector4(1.0f / Shared.AtlasSize.x, 1.0f / Shared.AtlasSize.y));
@@ -36,42 +37,38 @@ namespace Environment
         
         private void Update()
         {
-            sharedData.Update();
+            m_SharedData.Update();
             
-            if (target == null) return; // safety check
-
             var targetPosition = target.position.ToChunk(chunkSize);
 
             if (m_LastTargetChunkPosition.Equals(targetPosition)) return;
 
             // Make sure its not out of range;
-            foreach (var chunkNode in generateChunkQueue)
+            foreach (var chunkNode in m_GenerateChunksQueue)
             {
                 if (chunkNode == null) return;
                 var deltaPosition = targetPosition - chunkNode.chunkPosition;
                 if (chunkSpawnSize.x < Mathf.Abs(deltaPosition.x) || chunkSpawnSize.y < Mathf.Abs(deltaPosition.y) || chunkSpawnSize.y < Mathf.Abs(deltaPosition.z))
                 {
-                    generateChunkQueue.Remove(chunkNode);
+                    m_GenerateChunksQueue.Remove(chunkNode);
                     continue;
                 }
 
-                generateChunkQueue.UpdatePriority(chunkNode, math.lengthsq(deltaPosition));
+                m_GenerateChunksQueue.UpdatePriority(chunkNode, math.lengthsq(deltaPosition));
             }
-
-            // Direct generate y once could ignore the bug of no object culling above
+            
             for (int x = targetPosition.x - chunkSpawnSize.x, xMax = targetPosition.x + chunkSpawnSize.x; x <= xMax; x++)
                 for (int z = targetPosition.z - chunkSpawnSize.y, zMax = targetPosition.z + chunkSpawnSize.y; z <= zMax; z++)
                 {
                     var chunkPosition = new int3(x, 0, z);
 
-                    if (chunks.ContainsKey(chunkPosition)) continue;
+                    if (m_Chunks.ContainsKey(chunkPosition)) continue;
 
                     var newNode = new ChunkNode { chunkPosition = chunkPosition };
 
-                    if (generateChunkQueue.Contains(newNode)) continue;
-
-                    var deltaPosition = targetPosition - chunkPosition;
-                    generateChunkQueue.Enqueue(newNode, math.lengthsq(deltaPosition)); // 往Queue添加Node
+                    if (m_GenerateChunksQueue.Contains(newNode)) continue;
+                    
+                    m_GenerateChunksQueue.Enqueue(newNode, math.lengthsq(targetPosition - chunkPosition)); // 往Queue添加Node
                 }
             
             m_LastTargetChunkPosition = targetPosition;
@@ -80,24 +77,33 @@ namespace Environment
         private void LateUpdate()
         {
             int numChunks = 0;
-            while (generateChunkQueue.Count != 0)
+            while (m_GenerateChunksQueue.Count != 0)
             {
                 if (numChunks >= maxGenerateChunksInFrame) return;
 
-                var chunkPosition = generateChunkQueue.Dequeue().chunkPosition;
+                var chunkPosition = m_GenerateChunksQueue.Dequeue().chunkPosition;
 
                 GenerateChunk(chunkPosition);
                 numChunks++;
             }
         }
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(target.position, new Vector3(chunkSize.x * chunkSpawnSize.x * 2, chunkSize.y, chunkSize.z * chunkSpawnSize.y * 2));
+        }
+
         private Chunk GenerateChunk(int3 chunkPosition)
         {
-            if (chunks.ContainsKey(chunkPosition)) return chunks[chunkPosition];
+            if (m_Chunks.ContainsKey(chunkPosition)) return m_Chunks[chunkPosition];
 
-            var chunkGameObject = new GameObject(chunkPosition.ToString());
-            chunkGameObject.transform.SetParent(transform);
-            chunkGameObject.transform.position = chunkPosition.ToWorld(chunkSize);
+            var chunkGameObject = new GameObject(chunkPosition.ToString())
+            {
+                transform = {
+                    parent = transform, position = chunkPosition.ToWorld(chunkSize)
+                }
+            };
 
             var newChunk = chunkGameObject.AddComponent<Chunk>();
             newChunk.InitChunk(chunkPosition, chunkMaterial, chunkSize);
@@ -107,7 +113,7 @@ namespace Environment
                     for (int z = chunkPosition.z - 1, zMax = chunkPosition.z + 1; z <= zMax; z++)
                     {
                         var neighborChunkPosition = new int3(x, chunkPosition.y, z);
-                        if (chunks.TryGetValue(neighborChunkPosition, out Chunk neighborChunk))
+                        if (m_Chunks.TryGetValue(neighborChunkPosition, out Chunk neighborChunk))
                         {
                             if (!neighborChunk.Initialized)
                                 return false;
@@ -118,7 +124,7 @@ namespace Environment
                 return true;
             };
 
-            chunks.Add(chunkPosition, newChunk);
+            m_Chunks.Add(chunkPosition, newChunk);
             return newChunk;
         }
 
@@ -126,7 +132,7 @@ namespace Environment
         public bool GetChunk(Vector3 worldPosition, out Chunk chunk)
         {
             var chunkPosition = worldPosition.ToChunk(chunkSize);
-            return chunks.TryGetValue(chunkPosition, out chunk);
+            return m_Chunks.TryGetValue(chunkPosition, out chunk);
         }
 
         public bool GetBlock(Vector3 worldPosition, out Block block)
@@ -173,7 +179,7 @@ namespace Environment
                                 var neighborChunkPosition = (worldPosition + new Vector3(x, y, z)).ToChunk(chunkSize);
                                 if (chunkPosition.Equals(neighborChunkPosition)) continue;
 
-                                if (chunks.TryGetValue(neighborChunkPosition, out Chunk neighborChunk))
+                                if (m_Chunks.TryGetValue(neighborChunkPosition, out Chunk neighborChunk))
                                     neighborChunk.NeighborChunkIsChanged();
                             }
 
@@ -192,7 +198,7 @@ namespace Environment
                     for (int z = chunkPosition.z - numNeighbor, zMax = chunkPosition.z + numNeighbor; z <= zMax; z++)
                     {
                         var neighborChunkPosition = new int3(x, y, z);
-                        neighborBlocks.Add(chunks.TryGetValue(neighborChunkPosition, out Chunk chunk) ? chunk.Blocks : null);
+                        neighborBlocks.Add(m_Chunks.TryGetValue(neighborChunkPosition, out Chunk chunk) ? chunk.Blocks : null);
                     }
 
             return neighborBlocks;
