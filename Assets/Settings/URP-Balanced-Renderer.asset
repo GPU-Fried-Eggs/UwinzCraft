@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c205c6a15e61925449102f2646db0aa8, type: 3}
   m_Name: SSGI
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     renderPassEvent: 300
     Material: {fileID: 2100000, guid: f95aadf0b840fa14bb0c2013cf74eecc, type: 2}

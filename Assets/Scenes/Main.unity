@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 410087040}
-  m_IndirectSpecularColor: {r: NaN, g: NaN, b: NaN, a: 1}
+  m_IndirectSpecularColor: {r: 0.54087687, g: 0.6821602, b: 0.8399308, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -737,10 +737,10 @@ MonoBehaviour:
     x: 8
     y: 8
   chunkMaterial:
-  - {fileID: 2100000, guid: e8ca50dc10b15e34eb1ef01523e3894c, type: 2}
+  - {fileID: 2100000, guid: bc97d8be6d8443f44b75b7d5ada5a92d, type: 2}
   - {fileID: 2100000, guid: cdb5a16f31ee9ca43b20ee76fcbdffbf, type: 2}
   - {fileID: 2100000, guid: 810ffeed0b008ce4690300c99508da0d, type: 2}
-  - {fileID: 2100000, guid: e8ca50dc10b15e34eb1ef01523e3894c, type: 2}
+  - {fileID: 2100000, guid: bc97d8be6d8443f44b75b7d5ada5a92d, type: 2}
   maxGenerateChunksInFrame: 1
 --- !u!4 &2139749289
 Transform:
