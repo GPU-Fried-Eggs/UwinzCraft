@@ -1,5 +1,4 @@
-#ifndef UNIVERSAL_SIMPLE_LIT_META_PASS_INCLUDED
-#define UNIVERSAL_SIMPLE_LIT_META_PASS_INCLUDED
+#pragma once
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl"
 
@@ -44,13 +43,16 @@ half4 UniversalFragmentMeta(Varyings fragIn, MetaInput metaInput)
     return UnityMetaFragment(metaInput);
 }
 
-half4 UniversalFragmentMetaSimple(Varyings input) : SV_Target
+half4 UniversalFragmentMetaLit(Varyings input) : SV_Target
 {
-    float4 uv = input.uv;
-    MetaInput metaInput;
-    metaInput.Albedo = _BaseColor.rgb * SampleTexture(_BaseMap, sampler_BaseMap, uv).rgb;
-    metaInput.Emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+    SurfaceData surfaceData;
+    InitializeStandardLitSurfaceData(input.uv, surfaceData);
 
+    BRDFData brdfData;
+    InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
+
+    MetaInput metaInput;
+    metaInput.Albedo = brdfData.diffuse + brdfData.specular * brdfData.roughness * 0.5;
+    metaInput.Emission = surfaceData.emission;
     return UniversalFragmentMeta(input, metaInput);
 }
-#endif

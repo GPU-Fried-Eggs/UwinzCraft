@@ -1,5 +1,4 @@
-#ifndef UNIVERSAL_SHADOW_CASTER_PASS_INCLUDED
-#define UNIVERSAL_SHADOW_CASTER_PASS_INCLUDED
+#pragma once
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
@@ -61,5 +60,3 @@ half4 ShadowPassFragment(Varyings input) : SV_TARGET
     Alpha(SampleAlbedoAlpha(input.uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap)).a, _BaseColor, _Cutoff);
     return 0;
 }
-
-#endif
