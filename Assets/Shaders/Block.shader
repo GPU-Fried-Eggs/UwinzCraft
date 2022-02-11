@@ -1,4 +1,4 @@
-Shader "Universal Render Pipeline/Block"
+Shader "UwinzCraft/Block"
 {
     Properties
     {

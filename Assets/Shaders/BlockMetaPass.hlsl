@@ -16,10 +16,10 @@ struct Varyings
 {
     float4 positionCS   : SV_POSITION;
     float4 uv           : TEXCOORD0;
-    #ifdef EDITOR_VISUALIZATION
+#ifdef EDITOR_VISUALIZATION
     float2 VizUV        : TEXCOORD1;
     float4 LightCoord   : TEXCOORD2;
-    #endif
+#endif
 };
 
 Varyings UniversalVertexMeta(Attributes input)
@@ -27,18 +27,18 @@ Varyings UniversalVertexMeta(Attributes input)
     Varyings output = (Varyings)0;
     output.positionCS = UnityMetaVertexPosition(input.positionOS.xyz, input.uv1, input.uv2);
     output.uv = input.uv0;
-    #ifdef EDITOR_VISUALIZATION
+#ifdef EDITOR_VISUALIZATION
     UnityEditorVizData(input.positionOS.xyz, input.uv0, input.uv1, input.uv2, output.VizUV, output.LightCoord);
-    #endif
+#endif
     return output;
 }
 
 half4 UniversalFragmentMeta(Varyings fragIn, MetaInput metaInput)
 {
-    #ifdef EDITOR_VISUALIZATION
+#ifdef EDITOR_VISUALIZATION
     metaInput.VizUV = fragIn.VizUV;
     metaInput.LightCoord = fragIn.LightCoord;
-    #endif
+#endif
 
     return UnityMetaFragment(metaInput);
 }

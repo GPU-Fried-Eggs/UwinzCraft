@@ -209,7 +209,7 @@ namespace Environment.System
             }
             else if (EnvironmentProbe.texture != null || EnvironmentProbe.IsFinishedRendering(m_ProbeRenderId))
             {
-                if (Time.frameCount % 32 == 0)
+                if (Time.frameCount % m_Data.updateRate == 0)
                 {
                     Graphics.CopyTexture(EnvironmentProbe.texture, EnvironmentReflection);
                     RenderSettings.customReflection = EnvironmentReflection;

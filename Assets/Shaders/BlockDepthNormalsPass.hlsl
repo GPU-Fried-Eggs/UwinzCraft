@@ -30,15 +30,15 @@ struct Varyings
     float4 uv           : TEXCOORD1;
     half3 normalWS     : TEXCOORD2;
 
-    #if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
     half4 tangentWS    : TEXCOORD4;    // xyz: tangent, w: sign
-    #endif
+#endif
 
     half3 viewDirWS    : TEXCOORD5;
 
-    #if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
     half3 viewDirTS     : TEXCOORD8;
-    #endif
+#endif
 
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
@@ -59,19 +59,19 @@ Varyings DepthNormalsVertex(Attributes input)
 
     half3 viewDirWS = GetWorldSpaceNormalizeViewDir(vertexInput.positionWS);
     output.normalWS = half3(normalInput.normalWS);
-    #if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR) || defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
-        float sign = input.tangentOS.w * float(GetOddNegativeScale());
-        half4 tangentWS = half4(normalInput.tangentWS.xyz, sign);
-    #endif
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR) || defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    float sign = input.tangentOS.w * float(GetOddNegativeScale());
+    half4 tangentWS = half4(normalInput.tangentWS.xyz, sign);
+#endif
 
-    #if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
-        output.tangentWS = tangentWS;
-    #endif
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    output.tangentWS = tangentWS;
+#endif
 
-    #if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
-        half3 viewDirTS = GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
-        output.viewDirTS = viewDirTS;
-    #endif
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirTS = GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
+    output.viewDirTS = viewDirTS;
+#endif
 
     return output;
 }

@@ -110,16 +110,16 @@ void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData
     inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
     inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
 
-    #if defined(DEBUG_DISPLAY)
+#if defined(DEBUG_DISPLAY)
     #if defined(DYNAMICLIGHTMAP_ON)
-    inputData.dynamicLightmapUV = input.dynamicLightmapUV;
+        inputData.dynamicLightmapUV = input.dynamicLightmapUV;
     #endif
     #if defined(LIGHTMAP_ON)
-    inputData.staticLightmapUV = input.staticLightmapUV;
+        inputData.staticLightmapUV = input.staticLightmapUV;
     #else
-    inputData.vertexSH = input.vertexSH;
+        inputData.vertexSH = input.vertexSH;
     #endif
-    #endif
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -198,12 +198,12 @@ half4 LitPassFragment(Varyings input) : SV_Target
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
 #if defined(_PARALLAXMAP)
-#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
-    half3 viewDirTS = input.viewDirTS;
-#else
-    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
-    half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
-#endif
+    #if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+        half3 viewDirTS = input.viewDirTS;
+    #else
+        half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+        half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
+    #endif
     ApplyPerPixelDisplacement(viewDirTS, input.uv);
 #endif
 

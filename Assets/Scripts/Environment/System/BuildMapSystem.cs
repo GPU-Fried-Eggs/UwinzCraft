@@ -42,12 +42,12 @@ namespace Environment.System
             {
                 block.type = BlockType.Bedrock;
             }
-            else if (worldPosition.y >= heightMap - 5 && worldPosition.y <= heightMap && isLake)
+            else if (worldPosition.y >= heightMap - 5 && worldPosition.y <= heightMap + 1 && isLake)
             {
                 if (Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.02f, 3) > 0.2f)
                 {
-                    block.type = worldPosition.y >= heightMap - 2 ? BlockType.Sand : // make to layer sand
-                                 worldPosition.y >= heightMap - 3 ? BlockType.SandStone : BlockType.Stone; //make a sand base, then stone
+                    block.type = worldPosition.y >= heightMap - 3 ? BlockType.Sand : // make to layer sand
+                                 worldPosition.y >= heightMap - 5 ? BlockType.SandStone : BlockType.Stone; //make a sand base, then stone
                 }
                 else
                 {

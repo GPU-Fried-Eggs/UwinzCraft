@@ -140,6 +140,7 @@ namespace Environment
             EditorGUILayout.PropertyField(serializedObject.FindProperty("enableReflection"));
             EditorGUILayout.IntPopup(serializedObject.FindProperty("environmentReflectionResolution"), m_ResolutionName, m_Resolution);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("environmentReflectionTimeSlicingMode"), new GUIContent("Time Slicing"));
+            EditorGUILayout.IntSlider(serializedObject.FindProperty("updateRate"), 1, 255);
             
             // Events
             EditorGUILayout.Space(2);

@@ -69,6 +69,7 @@ namespace Environment.Data
         public bool enableReflection = false;
         public int environmentReflectionResolution;
         public ReflectionProbeTimeSlicingMode environmentReflectionTimeSlicingMode;
+        public int updateRate;
         
         // Event
         public UnityEvent onSunRise;

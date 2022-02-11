@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Burst.CompilerServices;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -94,6 +95,58 @@ public static class Shared
     {
         var vi = (int3) v;
         return math.select(vi, vi - 1, v < vi);
+    }
+
+    #endregion
+
+    #region ComputeBuffer
+
+    public static void CreateComputeBuffer<T>(this ComputeBuffer buffer, NativeArray<T> data, int stride) where T : struct
+    {
+        if (buffer != null) // Do we already have a compute buffer?
+        {
+            if (data.Length == 0 || buffer.count != data.Length || buffer.stride != stride)  // If no data or buffer doesn't match the given criteria, release it
+            {
+                buffer.Release();
+                buffer = null;
+            }
+        }
+
+        if (data.Length != 0)
+        {
+            buffer ??= new ComputeBuffer(data.Length, stride);
+            buffer.SetData(data);
+        }
+    }
+
+    public static void SetComputeBuffer(this ComputeShader shader, int kernelIndex, string name, ComputeBuffer buffer)
+    {
+        if (buffer != null)
+            shader.SetBuffer(kernelIndex, name, buffer);
+    }
+
+    #endregion
+
+    #region Texture
+
+    public static Texture2DArray CreateTextureArray(Texture2D[] textures)
+    {
+        if (textures == null || textures.Length == 0) return null;
+
+        var firstTexture = textures[0];
+        var textureArray = new Texture2DArray(firstTexture.width, firstTexture.height, textures.Length, firstTexture.format, firstTexture.mipmapCount > 0)
+        {
+            anisoLevel = firstTexture.anisoLevel,
+            filterMode = firstTexture.filterMode,
+            wrapMode = firstTexture.wrapMode
+        };
+        for (int i = 0, iMax = textures.Length; i < iMax; i++)
+            for (int m = 0, mMax = firstTexture.mipmapCount; m < mMax; m++)
+                Graphics.CopyTexture(textures[i], 0, m, textureArray, i, m);
+        
+        textureArray.Apply();
+        
+        return textureArray;
     }
 
     #endregion
