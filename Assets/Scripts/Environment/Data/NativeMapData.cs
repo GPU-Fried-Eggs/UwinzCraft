@@ -28,20 +28,39 @@ namespace Environment.Data
         {
             nativeBlocks.CopyFrom(blocks);
 
-            jobHandle = new BuildMapSystem
+            var maxHeight = 0;
+            
+            var baseJobHandle = new BuildBaseSystem
             {
                 chunkPosition = chunkPosition,
                 chunkSize = chunkSize,
+                maxHeight = maxHeight,
                 blocks = nativeBlocks,
             }.Schedule(nativeBlocks.Length, 32);
 
+            var mineJobHandle = new BuildMineSystem
+            {
+                chunkPosition = chunkPosition,
+                chunkSize = chunkSize,
+                maxHeight = maxHeight,
+                blocks = nativeBlocks,
+            }.Schedule(nativeBlocks.Length, 32, baseJobHandle);
+            
+            jobHandle = new BuildFoliageSystem
+            {
+                chunkPosition = chunkPosition,
+                chunkSize = chunkSize,
+                maxHeight = maxHeight,
+                blocks = nativeBlocks,
+            }.Schedule(nativeBlocks.Length, 32, mineJobHandle);
+            
             int frameCount = 1;
             yield return new WaitUntil(() =>
             {
                 frameCount++;
                 return jobHandle.IsCompleted || frameCount >= 4;
             });
-                
+            
             jobHandle.Complete();
             nativeBlocks.CopyTo(blocks);
             nativeBlocks.Dispose();

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -99,55 +101,56 @@ public static class Shared
 
     #endregion
 
-    #region ComputeBuffer
+    #region Graphic
 
-    public static void CreateComputeBuffer<T>(this ComputeBuffer buffer, NativeArray<T> data, int stride) where T : struct
+    public static void UpdateBuffer<T>(this ComputeBuffer buffer, List<T> data, int stride) where T : struct
     {
-        if (buffer != null) // Do we already have a compute buffer?
+        buffer?.Release();
+        if (data.Count == 0) return;
+        buffer = new ComputeBuffer(data.Count, stride);
+        buffer.SetData(data);
+    }
+
+    public static Texture2DArray ToTextureArray(this List<Texture2D> textures)
+    {
+        int texWidth = 1, texHeight = 1;
+        foreach (var tex in textures)
         {
-            if (data.Length == 0 || buffer.count != data.Length || buffer.stride != stride)  // If no data or buffer doesn't match the given criteria, release it
-            {
-                buffer.Release();
-                buffer = null;
-            }
+            texWidth = Mathf.Max(texWidth, tex.width);
+            texHeight = Mathf.Max(texHeight, tex.height);
         }
-
-        if (data.Length != 0)
+        int maxDim = GetMaxDimension(textures.Count, Mathf.Max(texWidth, texHeight));
+        texWidth = Mathf.Min(texWidth, maxDim);
+        texHeight = Mathf.Min(texHeight, maxDim);
+        var newTexture = new Texture2DArray(texWidth, texHeight, Mathf.Max(1, textures.Count), TextureFormat.ARGB32, true, false);
+        newTexture.SetPixels(Enumerable.Repeat(Color.white, texWidth * texHeight).ToArray(), 0, 0);
+        var rt = new RenderTexture(texWidth, texHeight, 1, RenderTextureFormat.ARGB32);
+        var tmp = new Texture2D(texWidth, texHeight, TextureFormat.ARGB32, false);
+        for (int i = 0; i < textures.Count; i++)
         {
-            buffer ??= new ComputeBuffer(data.Length, stride);
-            buffer.SetData(data);
+            RenderTexture.active = rt;
+            Graphics.Blit(textures[i], rt);
+            tmp.ReadPixels(new Rect(0, 0, texWidth, texHeight), 0, 0);
+            tmp.Apply();
+            newTexture.SetPixels(tmp.GetPixels(0), i, 0);
         }
+        newTexture.Apply();
+        RenderTexture.active = null;
+        Object.Destroy(rt);
+        Object.Destroy(tmp);
+        return newTexture;
     }
 
-    public static void SetComputeBuffer(this ComputeShader shader, int kernelIndex, string name, ComputeBuffer buffer)
+    public static int GetMaxDimension(int count, int dim) => dim switch
     {
-        if (buffer != null)
-            shader.SetBuffer(kernelIndex, name, buffer);
-    }
+        >= 2048 => count <= 16 ? 2048 : 1024,
+        >= 1024 => count <= 48 ? 1024 : 512,
+        _ => dim
+    };
 
-    #endregion
+    public static Vector4 ToVector4(this Color color) => new Vector4(color.r, color.g, color.b, color.a);
 
-    #region Texture
-
-    public static Texture2DArray CreateTextureArray(Texture2D[] textures)
-    {
-        if (textures == null || textures.Length == 0) return null;
-
-        var firstTexture = textures[0];
-        var textureArray = new Texture2DArray(firstTexture.width, firstTexture.height, textures.Length, firstTexture.format, firstTexture.mipmapCount > 0)
-        {
-            anisoLevel = firstTexture.anisoLevel,
-            filterMode = firstTexture.filterMode,
-            wrapMode = firstTexture.wrapMode
-        };
-        for (int i = 0, iMax = textures.Length; i < iMax; i++)
-            for (int m = 0, mMax = firstTexture.mipmapCount; m < mMax; m++)
-                Graphics.CopyTexture(textures[i], 0, m, textureArray, i, m);
-        
-        textureArray.Apply();
-        
-        return textureArray;
-    }
+    public static Vector3 ToVector3(this Color color) => new Vector3(color.r, color.g, color.b);
 
     #endregion
 }
