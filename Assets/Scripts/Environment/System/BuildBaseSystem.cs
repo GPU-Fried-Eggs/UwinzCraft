@@ -21,7 +21,7 @@ namespace Environment.System
             var gridPosition = index.To3DIndex(chunkSize);
             var worldPosition = gridPosition + chunkPosition * chunkSize;
             var block = new Block();
-            var rand = Random.CreateFromIndex((uint)index);
+            var rand = Random.CreateFromIndex((uint)(index + math.lengthsq(worldPosition)));
             
             var waterLevel = 55;
             
@@ -86,6 +86,7 @@ namespace Environment.System
             {
                 block.type = BlockType.Air;
             }
+            
             blocks[index] = block;
         }
     }

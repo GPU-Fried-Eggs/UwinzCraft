@@ -203,5 +203,20 @@ namespace Environment
 
             return neighborBlocks;
         }
+
+        public List<Chunk> GetNeighborChunks(int3 chunkPosition, int numNeighbor)
+        {
+            var neighborChunks = new List<Chunk>();
+            
+            for (int x = chunkPosition.x - 1, xMax = chunkPosition.x + numNeighbor; x <= xMax; x++)
+                for (int y = chunkPosition.y - numNeighbor, yMax = chunkPosition.y + numNeighbor; y <= yMax; y++)
+                    for (int z = chunkPosition.z - numNeighbor, zMax = chunkPosition.z + numNeighbor; z <= zMax; z++)
+                    {
+                        var neighborChunkPosition = new int3(x, y, z);
+                        neighborChunks.Add(m_Chunks.TryGetValue(neighborChunkPosition, out Chunk chunk) ? chunk : null);
+                    }
+
+            return neighborChunks;
+        }
     }
 }

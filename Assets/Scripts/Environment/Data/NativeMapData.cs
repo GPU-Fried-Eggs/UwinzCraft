@@ -42,7 +42,6 @@ namespace Environment.Data
             {
                 chunkPosition = chunkPosition,
                 chunkSize = chunkSize,
-                maxHeight = maxHeight,
                 blocks = nativeBlocks,
             }.Schedule(nativeBlocks.Length, 32, baseJobHandle);
             
@@ -50,7 +49,6 @@ namespace Environment.Data
             {
                 chunkPosition = chunkPosition,
                 chunkSize = chunkSize,
-                maxHeight = maxHeight,
                 blocks = nativeBlocks,
             }.Schedule(nativeBlocks.Length, 32, mineJobHandle);
             

@@ -36,7 +36,7 @@ namespace Environment.System
 
             bool isLake = heightMap <= waterLevel;
 
-            bool isCaves = noise.cnoise(worldPosition * new float3(0.035f)) > 0.75f;
+            bool isCaves = Noise.FractalSimplex(worldPosition, 0.035f, 8) > 0.75f;
 
             if (worldPosition.y == 0 || worldPosition.y < rand.NextInt(5))
             {
