@@ -1,16 +1,22 @@
 ﻿using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Environment
 {
-    [StructLayout(LayoutKind.Sequential, Size=1)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct Block
     {
-        public BlockType type;
-        //public int light;
+        [FieldOffset(0)] public BlockType type;
         
-        public Block(BlockType type) => this.type = type;
+        [FieldOffset(1)] public Color32 color; // humidity and tempareture effect the weather; 
 
-        public static Block Empty => new Block(BlockType.Air);
+        public Block(BlockType type, Color32 color)
+        {
+            this.type = type;
+            this.color = color;
+        }
+
+        public static Block Empty => new Block(BlockType.Air, new Color32(0, 0, 0, 0));
     }
 
     public enum BlockType : byte

@@ -10,6 +10,9 @@ namespace Environment.Data
 
         public BlockShape shape;
         
+        /// <summary>
+        /// right - left - top - bottom - front - back
+        /// </summary>
         public int2[] atlasPositions = new int2[6]; // 0 - 255
         
     }

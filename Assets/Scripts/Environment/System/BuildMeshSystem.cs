@@ -183,7 +183,7 @@ namespace Environment.System
 
                                         float3 vertex = SharedData.CubeVertices.Data[SharedData.CubeFaces.Data[i]];
 
-                                        colors[numVertices + i] = new Color(0, 0, 0, 1);
+                                        colors[numVertices + i] = block.color;
                                         vertices[numVertices + i] = vertex + gridPosition + new float3(0, -0.04f, 0);
                                         normals[numVertices + i] = (i < 4) ? new float3(0.7f, 0, 0.7f) : new float3(-0.7f, 0, 0.7f);
                                         uvs[numVertices + i] = new float4
@@ -210,7 +210,7 @@ namespace Environment.System
                                         vertex[SharedData.DirectionAlignedX.Data[direction]] *= width;
                                         vertex[SharedData.DirectionAlignedY.Data[direction]] *= height;
 
-                                        colors[numVertices + i] = new Color(0, 0, 0, 1);
+                                        colors[numVertices + i] = block.color;
                                         vertices[numVertices + i] = vertex + gridPosition;
                                         normals[numVertices + i] = SharedData.CubeDirectionOffsets.Data[direction];
                                         uvs[numVertices + i] = new float4
@@ -221,7 +221,7 @@ namespace Environment.System
                                     }
 
                                     for (int i = 0; i < 6; i++)
-                                        blockIndices.AddNoResize(SharedData.CubeIndices.Data[direction * 6 + i] + numVertices);
+                                        blockIndices.Add(SharedData.CubeIndices.Data[direction * 6 + i] + numVertices);
 
                                     break;
                                 }
@@ -235,7 +235,7 @@ namespace Environment.System
                                         vertex[SharedData.DirectionAlignedX.Data[direction]] *= width;
                                         vertex[SharedData.DirectionAlignedY.Data[direction]] *= height;
 
-                                        colors[numVertices + i] = new Color(0, 0, 0, 1);
+                                        colors[numVertices + i] = block.color;
                                         vertices[numVertices + i] = vertex + gridPosition;
                                         normals[numVertices + i] = SharedData.CubeDirectionOffsets.Data[direction];
                                         uvs[numVertices + i] = new float4

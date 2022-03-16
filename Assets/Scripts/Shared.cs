@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Environment;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -11,10 +12,20 @@ public static class Shared
     #region Constants
 
     public static readonly int2 AtlasSize = new int2(16, 16);
+
+    public static readonly BlockShape[] shapeRendererMask =
+    {
+        BlockShape.Block, BlockShape.Transparent, BlockShape.Foliage, BlockShape.Liquid
+    };
+    
+    public static readonly BlockShape[] shapeColliderMask =
+    {
+        BlockShape.Block, //BlockShape.Transparent
+    };
     
     #endregion
 
-    #region Functions
+    #region Data Mapping
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int PackUVCoord(this int2 uv) => (uv.x & 0xF) << 4 | ((uv.y & 0xF) << 0);

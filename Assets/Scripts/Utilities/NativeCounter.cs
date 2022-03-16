@@ -72,10 +72,10 @@ namespace Utilities
             UnsafeUtility.Free(m_Counter, m_AllocatorLabel);
             m_Counter = null;
         }
-        
+
         [NativeContainer]
         [NativeContainerIsAtomicWriteOnly]
-        public unsafe struct Concurrent
+        public unsafe struct ParallelWriter
         {
             [NativeDisableUnsafePtrRestriction] private int* m_Counter;
 
@@ -83,17 +83,17 @@ namespace Utilities
             AtomicSafetyHandle m_Safety;
 #endif
             
-            public static implicit operator NativeCounter.Concurrent (NativeCounter cnt)
+            public static implicit operator NativeCounter.ParallelWriter(NativeCounter cnt)
             {
-                NativeCounter.Concurrent concurrent;
+                NativeCounter.ParallelWriter parallelWriter;
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                 AtomicSafetyHandle.CheckWriteAndThrow(cnt.m_Safety);
-                concurrent.m_Safety = cnt.m_Safety;
-                AtomicSafetyHandle.UseSecondaryVersion(ref concurrent.m_Safety);
+                parallelWriter.m_Safety = cnt.m_Safety;
+                AtomicSafetyHandle.UseSecondaryVersion(ref parallelWriter.m_Safety);
 #endif
 
-                concurrent.m_Counter = cnt.m_Counter;
-                return concurrent;
+                parallelWriter.m_Counter = cnt.m_Counter;
+                return parallelWriter;
             }
 
             public int Increment(int number = 1)

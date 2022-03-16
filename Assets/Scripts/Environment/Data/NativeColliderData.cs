@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using Utilities;
+// ReSharper disable InconsistentNaming
 
 namespace Environment.Data
 {
@@ -12,19 +13,19 @@ namespace Environment.Data
     {
         private struct MeshNode { public Chunk chunk; public Mesh mesh; }
         
-        private List<MeshNode> meshes = new();
+        private List<MeshNode> m_Meshes = new List<MeshNode>();
         
-        private NativeArray<int> meshIds;
-        private JobHandle jobHandle;
+        private NativeArray<int> m_MeshIds;
+        private JobHandle m_JobHandle;
         
-        public void Enqueue(Chunk chunk, Mesh mesh) => meshes.Add(new MeshNode { chunk = chunk, mesh = mesh });
+        public void Enqueue(Chunk chunk, Mesh mesh) => m_Meshes.Add(new MeshNode { chunk = chunk, mesh = mesh });
 
         private void Start() => StartCoroutine(BakeUpdater());
 
         private void OnDestroy()
         {
-            jobHandle.Complete();
-            if (meshIds.IsCreated) meshIds.Dispose();
+            m_JobHandle.Complete();
+            if (m_MeshIds.IsCreated) m_MeshIds.Dispose();
         }
         
         private IEnumerator BakeUpdater()
@@ -32,31 +33,31 @@ namespace Environment.Data
             int counter = 0;
             while (true)
             {
-                if (meshes.Count == 0) { counter = 0; yield return null; continue; }
-                if (counter < 4 && meshes.Count < 5) { counter++; yield return null; continue; } // 批处理
+                if (m_Meshes.Count == 0) { counter = 0; yield return null; continue; }
+                if (counter < 4 && m_Meshes.Count < 5) { counter++; yield return null; continue; } // 批处理
 
-                meshIds = new NativeArray<int>(meshes.Count, Allocator.TempJob);
+                m_MeshIds = new NativeArray<int>(m_Meshes.Count, Allocator.TempJob);
 
-                for (int i = 0, iMax = meshes.Count; i < iMax; ++i) 
-                    meshIds[i] = meshes[i].mesh.GetInstanceID();
+                for (int i = 0, iMax = m_Meshes.Count; i < iMax; ++i) 
+                    m_MeshIds[i] = m_Meshes[i].mesh.GetInstanceID();
                 
-                jobHandle = new BuildColliderSystem { meshIds = meshIds }.Schedule(meshIds.Length, 32);
+                m_JobHandle = new BuildColliderSystem { meshIds = m_MeshIds }.Schedule(m_MeshIds.Length, 32);
                 JobHandle.ScheduleBatchedJobs();
                 
                 int frameCount = 1;
                 yield return new WaitUntil(() =>
                 {
                     frameCount++;
-                    return jobHandle.IsCompleted || frameCount >= 4;
+                    return m_JobHandle.IsCompleted || frameCount >= 4;
                 });
                 
-                jobHandle.Complete();
-                meshIds.Dispose();
+                m_JobHandle.Complete();
+                m_MeshIds.Dispose();
 
-                for (int i = 0, iMax = meshes.Count; i < iMax; i++)
-                    meshes[i].chunk.SetSharedMesh(meshes[i].mesh);
+                for (int i = 0, iMax = m_Meshes.Count; i < iMax; i++)
+                    m_Meshes[i].chunk.SetSharedMesh(m_Meshes[i].mesh);
 
-                meshes.Clear();
+                m_Meshes.Clear();
                 counter = 0;
                 yield return null;
             }

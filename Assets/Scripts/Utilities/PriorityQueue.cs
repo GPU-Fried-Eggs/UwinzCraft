@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+// ReSharper disable InconsistentNaming
 
 namespace Utilities
 {
@@ -66,6 +67,7 @@ namespace Utilities
             {
                 return;
             }
+            
             while(parent > 1)
             {
                 parent >>= 1;
@@ -78,6 +80,7 @@ namespace Utilities
 
                 node.QueueIndex = parent;
             }
+            
             m_Nodes[node.QueueIndex] = node;
         }
 

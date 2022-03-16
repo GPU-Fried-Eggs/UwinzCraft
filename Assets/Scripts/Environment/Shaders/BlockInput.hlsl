@@ -308,7 +308,7 @@ half3 ApplyDetailNormal(float4 detailUv, half3 normalTS, half detailMask)
 #endif
 }
 
-inline void InitializeStandardLitSurfaceData(float4 uv, out SurfaceData outSurfaceData)
+inline void InitializeStandardLitSurfaceData(float4 uv, float3 color, out SurfaceData outSurfaceData)
 {
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
     outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
@@ -316,7 +316,7 @@ inline void InitializeStandardLitSurfaceData(float4 uv, out SurfaceData outSurfa
     half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a);
 #ifdef _ENABLE_COLOR_MASK
     half4 mask = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_ColorMask, sampler_ColorMask));
-    outSurfaceData.albedo = (albedoAlpha.rgb * step(mask.a, 0.9f) + mask.rgb * step(0.9f, mask.a) * _BaseColor.rgb).rgb;
+    outSurfaceData.albedo = (albedoAlpha.rgb * step(mask.a, 0.9f) + mask.rgb * step(0.9f, mask.a) * color).rgb;
 #else    
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
 #endif

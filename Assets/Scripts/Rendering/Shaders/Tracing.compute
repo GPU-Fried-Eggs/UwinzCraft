@@ -67,7 +67,8 @@ float3 Shade(inout Ray ray, HitInfo hit)
             }
         }
         
-            float random = rand();
+        float random = rand();
+
         if (hit.mode >= 3.0)
         {
             float outside = dot(ray.dir, hit.norm);

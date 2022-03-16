@@ -22,6 +22,7 @@ struct Attributes
     float4 positionOS   : POSITION;
     float3 normalOS     : NORMAL;
     float4 tangentOS    : TANGENT;
+    float3 color        : COLOR;
     float4 texcoord     : TEXCOORD0;
     float2 staticLightmapUV   : TEXCOORD1;
     float2 dynamicLightmapUV  : TEXCOORD2;
@@ -30,6 +31,7 @@ struct Attributes
 
 struct Varyings
 {
+    float3 color                    : COLOR;
     float4 uv                       : TEXCOORD0;
 
 #if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
@@ -129,6 +131,8 @@ Varyings LitGBufferPassVertex(Attributes input)
     // also required for per-vertex lighting and SH evaluation
     VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
 
+    output.color = input.color;
+    
     output.uv = input.texcoord;
 
     // already normalized from normal transform to WS.
@@ -189,7 +193,7 @@ FragmentOutput LitGBufferPassFragment(Varyings input)
 #endif
 
     SurfaceData surfaceData;
-    InitializeStandardLitSurfaceData(input.uv, surfaceData);
+    InitializeStandardLitSurfaceData(input.uv, input.color, surfaceData);
 
     InputData inputData;
     InitializeInputData(input, surfaceData.normalTS, inputData);

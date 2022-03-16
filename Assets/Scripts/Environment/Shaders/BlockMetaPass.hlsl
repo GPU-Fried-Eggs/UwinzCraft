@@ -6,6 +6,7 @@ struct Attributes
 {
     float4 positionOS   : POSITION;
     float3 normalOS     : NORMAL;
+    float3 color        : COLOR;
     float4 uv0          : TEXCOORD0;
     float2 uv1          : TEXCOORD1;
     float2 uv2          : TEXCOORD2;
@@ -15,6 +16,7 @@ struct Attributes
 struct Varyings
 {
     float4 positionCS   : SV_POSITION;
+    float3 color        : COLOR;
     float4 uv           : TEXCOORD0;
 #ifdef EDITOR_VISUALIZATION
     float2 VizUV        : TEXCOORD1;
@@ -26,6 +28,7 @@ Varyings UniversalVertexMeta(Attributes input)
 {
     Varyings output = (Varyings)0;
     output.positionCS = UnityMetaVertexPosition(input.positionOS.xyz, input.uv1, input.uv2);
+    output.color = input.color;
     output.uv = input.uv0;
 #ifdef EDITOR_VISUALIZATION
     UnityEditorVizData(input.positionOS.xyz, input.uv0, input.uv1, input.uv2, output.VizUV, output.LightCoord);
@@ -46,7 +49,7 @@ half4 UniversalFragmentMeta(Varyings fragIn, MetaInput metaInput)
 half4 UniversalFragmentMetaLit(Varyings input) : SV_Target
 {
     SurfaceData surfaceData;
-    InitializeStandardLitSurfaceData(input.uv, surfaceData);
+    InitializeStandardLitSurfaceData(input.uv, input.color, surfaceData);
 
     BRDFData brdfData;
     InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);

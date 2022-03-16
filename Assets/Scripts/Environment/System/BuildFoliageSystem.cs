@@ -23,30 +23,30 @@ namespace Environment.System
                 var rand = Random.CreateFromIndex((uint)(index + math.lengthsq(worldPosition)));
                 if (gridPosition.x < chunkSize.x - 3 && gridPosition.x > 3 &&
                     gridPosition.z < chunkSize.z - 3 && gridPosition.z > 3 &&
-                    Noise.ClampedSimplex(worldPosition.xz, 0.45f) > 0.9f)
+                    Noise.ClampedSimplex(worldPosition.xz, 0.45f) > 0.88f)
                 {
-                    var treeHeight = rand.NextBool() ? 5 : 6;
+                    var treeHeight = rand.NextBool() ? 6 : 7;
                     for (int xAxis = -2; xAxis < 3; xAxis++)
                         for (int zAxis = -2; zAxis < 3; zAxis++)
                         {
-                            blocks[(gridPosition + new int3(xAxis, treeHeight - 2, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves);
-                            blocks[(gridPosition + new int3(xAxis, treeHeight - 3, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves);
+                            blocks[(gridPosition + new int3(xAxis, treeHeight - 2, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves, blocks[index].color);
+                            blocks[(gridPosition + new int3(xAxis, treeHeight - 3, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves, blocks[index].color);
                         }
 
                     for (int xAxis = -1; xAxis < 2; xAxis++)
                         for (int zAxis = -1; zAxis < 2; zAxis++)
                         {
-                            blocks[(gridPosition + new int3(xAxis, treeHeight - 1, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves);
+                            blocks[(gridPosition + new int3(xAxis, treeHeight - 1, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves, blocks[index].color);
                         }
                     
                     for (int xAxis = -1; xAxis < 2; xAxis++)
-                        blocks[(gridPosition + new int3(xAxis, treeHeight, 0)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves);
+                        blocks[(gridPosition + new int3(xAxis, treeHeight, 0)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves, blocks[index].color);
                     
                     for (int zAxis = -1; zAxis < 2; zAxis++)
-                        blocks[(gridPosition + new int3(0, treeHeight, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves);
+                        blocks[(gridPosition + new int3(0, treeHeight, zAxis)).To1DIndex(chunkSize)] = new Block(BlockType.OakLeaves, blocks[index].color);
 
                     for (int i = 1; i < treeHeight; i++)
-                        blocks[(gridPosition + new int3(0, i, 0)).To1DIndex(chunkSize)] = new Block(BlockType.OakLog);
+                        blocks[(gridPosition + new int3(0, i, 0)).To1DIndex(chunkSize)] = new Block(BlockType.OakLog, blocks[index].color);
                     
                 }
                 else if (gridPosition.x < chunkSize.x - 1 && gridPosition.x > 1 &&
@@ -56,11 +56,11 @@ namespace Environment.System
                     {
                         if (rand.NextBool())
                         {
-                            blocks[(gridPosition + new int3(0, 1, 0)).To1DIndex(chunkSize)] = new Block(BlockType.Grass);
+                            blocks[(gridPosition + new int3(0, 1, 0)).To1DIndex(chunkSize)] = new Block(BlockType.Grass, blocks[index].color);
                         }
                         else
                         {
-                            blocks[(gridPosition + new int3(0, 1, 0)).To1DIndex(chunkSize)] = new Block(BlockType.Grass);
+                            blocks[(gridPosition + new int3(0, 1, 0)).To1DIndex(chunkSize)] = new Block(BlockType.Grass, blocks[index].color);
                             // flowers?
                         }
                     }

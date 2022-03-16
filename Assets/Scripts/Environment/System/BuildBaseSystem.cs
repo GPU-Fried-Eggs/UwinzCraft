@@ -1,9 +1,10 @@
-using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 using Utilities;
+using Random = Unity.Mathematics.Random;
 
 namespace Environment.System
 {
@@ -23,13 +24,16 @@ namespace Environment.System
             var block = new Block();
             var rand = Random.CreateFromIndex((uint)(index + math.lengthsq(worldPosition)));
             
-            var waterLevel = 55;
+            const int waterLevel = 55;
             
-            var simplexHeight = Noise.FractalSimplex(worldPosition.xz + new float2(9.0f, 0.5f), 0.008f, 2) * 5f +
-                                    Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.022f, 3) * 4.5f +
-                                    Noise.FractalSimplex(worldPosition.xz + new float2(5.3f, 0.2f), 0.001f, 4) * 30f;//43f;
+            var biome = Noise.Voronoi(worldPosition.xz, 0.005f).yzw;
+            block.color = new Color32((byte) biome.x, (byte) biome.y, (byte) biome.z, 1);
 
-            maxHeight = (int)math.floor(simplexHeight) + waterLevel;
+            var simplexHeight = Noise.FractalSimplex(worldPosition.xz + new float2(9.0f, 0.5f), 0.008f, 2) * 5f +
+                                Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.022f, 3) * 4.5f +
+                                Noise.FractalSimplex(worldPosition.xz + new float2(5.3f, 0.2f), 0.001f, 4) * 30f;//43f;
+
+            maxHeight = (int) math.floor(simplexHeight) + waterLevel;
             
             var isBedrock = worldPosition.y == 0 || worldPosition.y < rand.NextInt(5);
             

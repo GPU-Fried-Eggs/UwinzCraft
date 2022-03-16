@@ -1,33 +1,39 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Environment.System;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Utilities;
+// ReSharper disable InconsistentNaming
 
 namespace Environment.Data
 {
     public class NativeMeshData
     {
-        private NativeArray<Block> nativeBlocks;
+        private NativeArray<Block> m_NativeBlocks;
+        private NativeCounter m_NativeCounter;
+        
         public NativeArray<float3> nativeVertices;
         public NativeArray<float3> nativeNormals;
+        public NativeArray<float4> nativeUVs;
+        public NativeArray<Color> nativeColors;
+        public Dictionary<BlockShape, NativeList<int>> nativeIndices;
         public NativeList<int> nativeBlockIndices;
         public NativeList<int> nativeLiquidIndices;
         public NativeList<int> nativeFoliageIndices;
         public NativeList<int> nativeTransparentIndices;
-        public NativeArray<float4> nativeUVs;
-        public NativeArray<Color> nativeColors;
         public JobHandle jobHandle;
-        private NativeCounter counter;
 
         public NativeMeshData(int3 chunkSize)
         {
             var numBlocks = chunkSize.x * chunkSize.y * chunkSize.z;
             var numLayer = chunkSize.x * chunkSize.z;
 
-            nativeBlocks = new NativeArray<Block>(numBlocks, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            m_NativeBlocks = new NativeArray<Block>(numBlocks, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             nativeVertices = new NativeArray<float3>(12 * numBlocks, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             nativeNormals = new NativeArray<float3>(12 * numBlocks, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             nativeUVs = new NativeArray<float4>(12 * numBlocks, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
@@ -36,7 +42,7 @@ namespace Environment.Data
             nativeLiquidIndices = new NativeList<int>(numLayer, Allocator.TempJob);
             nativeFoliageIndices = new NativeList<int>(numLayer, Allocator.TempJob);
             nativeTransparentIndices = new NativeList<int>(numLayer, Allocator.TempJob);
-            counter = new NativeCounter(Allocator.TempJob);
+            m_NativeCounter = new NativeCounter(Allocator.TempJob);
         }
 
         ~NativeMeshData()
@@ -46,7 +52,7 @@ namespace Environment.Data
 
         public void Dispose()
         {
-            if (nativeBlocks.IsCreated) nativeBlocks.Dispose();
+            if (m_NativeBlocks.IsCreated) m_NativeBlocks.Dispose();
             if (nativeVertices.IsCreated) nativeVertices.Dispose();
             if (nativeNormals.IsCreated) nativeNormals.Dispose();
             if (nativeUVs.IsCreated) nativeUVs.Dispose();
@@ -55,16 +61,16 @@ namespace Environment.Data
             if (nativeLiquidIndices.IsCreated) nativeLiquidIndices.Dispose();
             if (nativeFoliageIndices.IsCreated) nativeFoliageIndices.Dispose();
             if (nativeTransparentIndices.IsCreated) nativeTransparentIndices.Dispose();
-            if (counter.IsCreated) counter.Dispose();
+            if (m_NativeCounter.IsCreated) m_NativeCounter.Dispose();
         }
 
         public IEnumerator Generate(Block[] blocks, int3 chunkSize, bool argent = false)
         {
-            nativeBlocks.CopyFrom(blocks);
+            m_NativeBlocks.CopyFrom(blocks);
             
             jobHandle = new BuildMeshSystem
             {
-                blocks = nativeBlocks,
+                blocks = m_NativeBlocks,
                 chunkSize = chunkSize,
                 vertices = nativeVertices,
                 normals = nativeNormals,
@@ -74,7 +80,7 @@ namespace Environment.Data
                 liquidIndices = nativeLiquidIndices,
                 foliageIndices = nativeFoliageIndices,
                 transparentIndices = nativeTransparentIndices,
-                counter = counter
+                counter = m_NativeCounter
             }.Schedule();
 
             int frameCount = 1;
@@ -87,6 +93,6 @@ namespace Environment.Data
             jobHandle.Complete();
         }
 
-        public void GetMeshInformation(out int verticesSize) => verticesSize = counter.Count * 4;
+        public void GetMeshInformation(out int verticesSize) => verticesSize = m_NativeCounter.Count * 4;
     }
 }

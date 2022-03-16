@@ -96,7 +96,7 @@ StructuredBuffer<float3> _Vertices;
 StructuredBuffer<int> _Indices;
 StructuredBuffer<float3> _Normals;
 StructuredBuffer<float4> _Tangents;
-StructuredBuffer<float2> _UVs;
+StructuredBuffer<float4> _UVs;
 StructuredBuffer<float4x4> _Transforms;
 
 Texture2DArray<float4> _AlbedoTextures;

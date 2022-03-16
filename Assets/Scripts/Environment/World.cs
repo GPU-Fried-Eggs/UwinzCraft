@@ -19,7 +19,7 @@ namespace Environment
         
         private Dictionary<int3, Chunk> m_Chunks = new();
         private int3 m_LastTargetChunkPosition = int.MinValue;
-        private PriorityQueue<ChunkNode> m_GenerateChunksQueue = new(100000);
+        private PriorityQueue<ChunkNode> m_GenerateChunksQueue = new(233333);
         private SharedData m_SharedData;
         
         public int UpdatingChunks { get; set; }
