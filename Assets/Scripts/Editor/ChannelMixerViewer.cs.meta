@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 3fa6242d85e2fa54aa287f99c628348f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ViewDataDictionary: {instanceID: 0}
+  - addImageImage: {fileID: 2800000, guid: 4e9443fae60140846b0bc5e249a731fb, type: 3}
+  - nodeConnectionImage: {fileID: 2800000, guid: 7a72c3f040cec254cac023fb37066166,
+      type: 3}
+  - nodeConnectionSelectedImage: {fileID: 2800000, guid: 4b5402bb5f770d04788e72c0586e60dc,
+      type: 3}
+  - arrowUpImage: {fileID: 2800000, guid: 7ad42614dc64c9c45b6cbb4aa201745b, type: 3}
+  - arrowDownImage: {fileID: 2800000, guid: f692405174d9df54c8b51241870e10b9, type: 3}
+  - mouseLeftImage: {fileID: 2800000, guid: 90aa720ff596c904d94796d4cdd396c2, type: 3}
+  - mouseRightImage: {fileID: 2800000, guid: 546ad2ea935f06b48b951394b5cdbbf7, type: 3}
+  - saveIconImage: {fileID: 2800000, guid: 62015741c365bbb45a5fbed222f348be, type: 3}
+  - loadIconImage: {fileID: 2800000, guid: d84ab5db66296df43abc0899f590a266, type: 3}
+  - clearIconImage: {fileID: 2800000, guid: 91146709ad1e47848b4aaeec10fc4201, type: 3}
+  - transparencyImage: {fileID: 2800000, guid: a00f66188c83fef45a77a19fd3e915e3, type: 3}
+  - mixChannelShader: {fileID: 4800000, guid: 21608ac724ea2e94f867b72f2f10a98d, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

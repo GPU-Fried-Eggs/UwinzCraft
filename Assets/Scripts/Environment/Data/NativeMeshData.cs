@@ -21,7 +21,6 @@ namespace Environment.Data
         public NativeArray<float3> nativeNormals;
         public NativeArray<float4> nativeUVs;
         public NativeArray<Color> nativeColors;
-        public Dictionary<BlockShape, NativeList<int>> nativeIndices;
         public NativeList<int> nativeBlockIndices;
         public NativeList<int> nativeLiquidIndices;
         public NativeList<int> nativeFoliageIndices;

@@ -53,6 +53,7 @@ namespace Utilities
 
         /// <summary>
         /// Slow Voronoi Noise
+        /// https://towardsdatascience.com/replicating-minecraft-world-generation-in-python-1b491bc9b9a4
         /// </summary>
         /// <param name="v">position</param>
         /// <param name="scale"></param>

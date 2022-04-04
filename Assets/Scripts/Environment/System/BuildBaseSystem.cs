@@ -23,11 +23,11 @@ namespace Environment.System
             var worldPosition = gridPosition + chunkPosition * chunkSize;
             var block = new Block();
             var rand = Random.CreateFromIndex((uint)(index + math.lengthsq(worldPosition)));
-            
+
             const int waterLevel = 55;
-            
-            var biome = Noise.Voronoi(worldPosition.xz, 0.005f).yzw;
-            block.color = new Color32((byte) biome.x, (byte) biome.y, (byte) biome.z, 1);
+
+            var biomes = Noise.Voronoi(worldPosition.xz, 0.005f);
+            block.color = new Color32((byte) biomes.y, (byte) biomes.z, (byte) biomes.w, 1);
 
             var simplexHeight = Noise.FractalSimplex(worldPosition.xz + new float2(9.0f, 0.5f), 0.008f, 2) * 5f +
                                 Noise.FractalSimplex(worldPosition.xz + new float2(0.2f, 7.5f), 0.022f, 3) * 4.5f +
