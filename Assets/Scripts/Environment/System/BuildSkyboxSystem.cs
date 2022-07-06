@@ -212,7 +212,7 @@ namespace Environment.System
                 if (Time.frameCount % m_Data.updateRate == 0)
                 {
                     Graphics.CopyTexture(EnvironmentProbe.texture, EnvironmentReflection);
-                    RenderSettings.customReflection = EnvironmentReflection;
+                    RenderSettings.customReflectionTexture = EnvironmentReflection;
                     RenderSettings.defaultReflectionMode = DefaultReflectionMode.Custom;
                     m_ProbeRenderId = EnvironmentProbe.RenderProbe();
                     Debug.Log("[Skybox] RT Update");   
