@@ -1,5 +1,17 @@
 # UwinzCraft
 
-Simple terrain framework
+## Description
 
-![image](https://github.com/GPU-Fried-Eggs/UwinzCraft/blob/master/Images/Screenshot-2022-02-06.png) 
+Simple terrain framework base on simplex noise.
+
+![image](Images/Main.png)
+
+## Check list
+
+- [x] Mesh generate system
+- [x] Day night cycle system
+- [ ] Auto block sprite generate system (editor)
+- [ ] Block feature (gravity, hardness, etc.)
+- [ ] Inventory system
+- [ ] Achievement system
+- [ ] Villiage generate system
